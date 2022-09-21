@@ -18,6 +18,10 @@ namespace CM.ASPCustomerWebAPI.Controllers
         [HttpPost]
         public IActionResult Create(Address address)
         {
+            if(address == null)
+            {
+                return BadRequest();
+            }
             _repository.Create(address);
             return Get(address.AddressID);
         }

@@ -13,12 +13,19 @@ namespace CM.ASPCustomerWebAPI.Controllers
         {
             _repository = repository;
         }
+
         [HttpPost]
         public IActionResult Create(Customer customer)
         {
+            if(customer == null)
+            {
+                return BadRequest();
+            }
             _repository.Create(customer);
             return Get(customer.CustomerID);
         }
+
+
         [HttpGet("{customerId}")]
         public IActionResult Get(int customerId)
         {

@@ -1,6 +1,8 @@
 ﻿using CM.ASPCustomerWebAPI.Controllers;
 using CM.Customers;
 using CM.Customers.Entities;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 
 namespace CM.WebAPITests
@@ -83,6 +85,71 @@ namespace CM.WebAPITests
             addressController.GetAll();
 
             repositoryMock.Verify(r => r.GetAll());
+        }
+
+        [Fact]
+        public void ShouldBeCreateBadRequest()
+        {
+            var repositoryMock = new Mock<IRepository<Address>>();
+            repositoryMock.Setup(x => x.Create(It.IsAny<Address>()));
+            AddressController customerController = new AddressController(repositoryMock.Object);
+
+            Address address = null;
+
+            var result = customerController.Create(address);
+
+            result.Should().BeOfType<BadRequestResult>();
+        }
+
+        [Fact]
+        public void ShouldBeGetBadRequest()
+        {
+            var repositoryMock = new Mock<IRepository<Address>>();
+            repositoryMock.Setup(x => x.Read(It.IsAny<int>())).Returns((Address)null);
+            AddressController customerController = new AddressController(repositoryMock.Object);
+
+            var result = customerController.Get(1);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public void ShouldBeGetAllBadRequest()
+        {
+            var repositoryMock = new Mock<IRepository<Address>>();
+            repositoryMock.Setup(x => x.GetAll()).Returns(new List<Address>());
+            AddressController customerController = new AddressController(repositoryMock.Object);
+
+
+            var result = customerController.GetAll();
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public void ShouldBeUpdateBadRequest()
+        {
+            var repositoryMock = new Mock<IRepository<Address>>();
+            repositoryMock.Setup(x => x.Update(It.IsAny<Address>()));
+            AddressController customerController = new AddressController(repositoryMock.Object);
+
+            Address address = null;
+
+            var result = customerController.Update(address);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Fact]
+        public void ShouldBeDeleteBadRequest()
+        {
+            var repositoryMock = new Mock<IRepository<Address>>();
+            repositoryMock.Setup(x => x.Delete(It.IsAny<int>()));
+            AddressController customerController = new AddressController(repositoryMock.Object);
+
+            var result = customerController.Delete(0);
+
+            result.Should().BeOfType<BadRequestObjectResult>();
         }
     }
 }
