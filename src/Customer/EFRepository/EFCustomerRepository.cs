@@ -9,17 +9,17 @@ namespace CM.Customers.EFRepository
     public class EFCustomerRepository : IRepository<Customer>
     {
 
-        CustomerValidator customerValidator;
+        private CustomerValidator _customerValidator;
         public EFCustomerRepository()
         {
-            customerValidator = new CustomerValidator();
+            _customerValidator = new CustomerValidator();
         }
 
         public void Create(Customer entity)
         {
             if (entity != null)
             {
-                var results = customerValidator.Validate(entity);
+                var results = _customerValidator.Validate(entity);
                 if (results.IsValid)
                 {
                     using (var db = new CustomersDBContex())
@@ -33,21 +33,32 @@ namespace CM.Customers.EFRepository
                     throw new Exception("Invalid customer");
                 }
             }
+            else
+            {
+                throw new ArgumentNullException("Customer is null");
+            }
 
         }
 
         public Customer Read(int? entityCode)
         {
-            using (var db = new CustomersDBContex())
+            if (entityCode != null)
             {
-                Customer customer = db.Customers.Find(entityCode);
-                return customer;
+                using (var db = new CustomersDBContex())
+                {
+                    Customer customer = db.Customers.Find(entityCode);
+                    return customer;
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException();
             }
         }
 
         public void Delete(int entityCode)
         {
-            using(var db = new CustomersDBContex())
+            using (var db = new CustomersDBContex())
             {
                 db.Customers.Remove(Read(entityCode));
                 db.SaveChanges();
@@ -61,7 +72,7 @@ namespace CM.Customers.EFRepository
 
         public List<Customer> GetAll()
         {
-            using(var db = new CustomersDBContex())
+            using (var db = new CustomersDBContex())
             {
                 return (db.Customers.ToList());
             }
@@ -71,13 +82,28 @@ namespace CM.Customers.EFRepository
 
         public void Update(Customer entity)
         {
-            using(var db = new CustomersDBContex())
+            if (entity != null)
             {
-                db.Entry(entity)
-                    .State = EntityState.Modified;
-                db.SaveChanges();
+                var results = _customerValidator.Validate(entity);
+                if (results.IsValid)
+                {
+                    using (var db = new CustomersDBContex())
+                    {
+                        db.Entry(entity)
+                            .State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    throw new Exception("Invalid customer");
+                }
             }
-            
+            else
+            {
+                throw new ArgumentNullException();
+            }
+
         }
     }
 }

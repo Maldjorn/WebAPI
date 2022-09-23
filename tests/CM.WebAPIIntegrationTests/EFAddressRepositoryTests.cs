@@ -42,10 +42,11 @@ namespace CM.WebAPIIntegrationTests
         public void ShouldBeAbleToUpdateAddresses()
         {
             var eFaddressRepository = new EFAddressRepository();
-            var address = new Address() {AddressID = 5, AddressLine = "addressLineTestUpdated", AddressLine2 = "addressLine2", AddressType = 1, City = "City", Country = "Canada", CustomerID = 2, PostalCode = "123123", State = "state" };
+            var address = new Address() {AddressID = 5, AddressLine = "addressLineTestUpdated1", AddressLine2 = "addressLine2", AddressType = 1, City = "City", Country = "Canada", CustomerID = 2, PostalCode = "123123", State = "state" };
 
             eFaddressRepository.Update(address);
-            Assert.True(eFaddressRepository.GetAll().Any(x => x.AddressLine == "addressLineTestUpdated"));
+
+            Assert.True(eFaddressRepository.GetAll().Any(x => x.AddressLine == "addressLineTestUpdated1"));
         }
     }
 }

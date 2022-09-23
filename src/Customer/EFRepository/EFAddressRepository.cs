@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CM.Customers.EFRepository
 {
@@ -35,22 +33,48 @@ namespace CM.Customers.EFRepository
                     throw new Exception("Invalid address");
                 }
             }
+            else
+            {
+                throw new ArgumentNullException();
+            }
         }
         public Address Read(int? entityCode)
         {
-            using (var db = new CustomersDBContex())
+            if (entityCode != null)
             {
-                Address address = db.Addresses.Find(entityCode);
-                return address;
+                using (var db = new CustomersDBContex())
+                {
+                    Address address = db.Addresses.Find(entityCode);
+                    return address;
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException();
             }
         }
         public void Update(Address entity)
         {
-            using (var db = new CustomersDBContex())
+            if (entity != null)
             {
-                db.Entry(entity)
-                    .State = EntityState.Modified;
-                db.SaveChanges();
+                var results = _addressvalidator.Validate(entity);
+                if (results.IsValid)
+                {
+                    using (var db = new CustomersDBContex())
+                    {
+                        db.Entry(entity)
+                            .State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    throw new Exception("Invalid address");
+                }
+            }
+            else
+            {
+                throw new ArgumentNullException();
             }
         }
 
